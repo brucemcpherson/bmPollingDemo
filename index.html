@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+</head>
+
+<body>
+  <div id="output">not started yet</div>
+
+  <script>
+    // promisify setTimeout
+    const waiter = (delayMs) => new Promise(resolve=> setTimeout (resolve() , delayMs));
+    
+    // a general promisified script.run
+    const runner = (name,...args) => new Promise(
+      (resolve, reject) => 
+        google.script.run
+          .withFailureHandler((err) => reject(err))
+          .withSuccessHandler((result) => resolve(result))[name](...args));
+    
+    
+    // use a unique value to distinguish multiple runs
+    // we use the usercache to distinguish multiple users running the same thing
+    const cacheId = new Date().getTime().toString(32) + '_poller';
+        
+    // how to know if we're finished
+    const isFinished = (data) => data === 'done';
+    
+    // this is how long to wait between polls
+    const POLLING_INTERVAL_MS = 500;
+
+    // this is the progress checker
+    const progress = () => runner("betterGetProgress", cacheId)
+      .then((data) => {
+        // display it
+        document.getElementById("output").innerHTML = data;
+        // go again
+        if (!isFinished(data)) waiter(POLLING_INTERVAL_MS).then(()=>progress())
+      })
+      .catch(err => console.log(err))
+
+    // this kicks everything off
+    runner("main", cacheId)
+      .then(() => {
+        console.log("main finished server side")
+      })
+      .catch(err => console.log(err))
+    
+    // start polling
+    progress();
+
+
+  </script>
+
+</body>
+
+</html>
