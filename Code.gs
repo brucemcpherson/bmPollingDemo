@@ -74,7 +74,7 @@ const betterGetProgress = (cacheId) => {
  * the worker script
  * @param {string} cacheId id a unique id for the cache entry
  */
-const betterMain = (cacheId = "test") => {
+const betterMain = (cacheId) => {
 
   // make a list of false tasks lasting some random amount of time
   const tasks = Array.from({length: 10}).map(f=>Math.ceil(Math.random()* 5000))
@@ -97,7 +97,6 @@ const betterMain = (cacheId = "test") => {
   tasks.forEach ((delay, taskNumber)=> {
     Utilities.sleep(delay);
     betterSetProgress (cacheId,progressPack ({taskNumber}));
-    console.log(betterGetProgress(cacheId))
   })
     // mark that we're starting
   betterSetProgress (cacheId,progressPack ({taskNumber: tasks.length , done: true}));
