@@ -10,7 +10,7 @@
 
   <script>
     // promisify setTimeout
-    const waiter = (delayMs) => new Promise(resolve=> setTimeout (resolve() , delayMs));
+    const waiter = (delayMs) => new Promise(resolve=> setTimeout (resolve , delayMs));
     
     // a general promisified script.run
     const runner = (name,...args) => new Promise(
